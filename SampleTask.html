@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" rel="stylesheet"/>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.1/css/selectize.min.css" rel="stylesheet"/>
+<div class="container">
+    <h2>Social Support in Forums</h2>
+
+    <div class="well well-lg">In online support groups, members help spread a sense of community in different ways:<br/>
+        &nbsp;
+        <ul>
+            <li><em><b>Chatting</b></em> messages ask or provide non-disease related information; often light hearted
+                conversation; e.g. &quot;It&#39;s so cold in Buffalo right now!&quot; or &quot;I like to do pilates
+                every morning after I wake up.&quot;</li>
+            <li><em><b>Humor</b></em> messages contain jokes or expressions of humor (e.g. LOL) or teasing.</li>
+            <li><em><b>Groupness</b></em> messages contain references to the community itself; e.g. &quot;We are all
+                pulling for you,&quot; or &quot;The people here are so supportive,&quot; or to a lesser extent, &quot;Let
+                us know how it goes.&quot;</li>
+        </ul>
+        With these definitions in mind, read the forum post below and indicate the kinds of community support it
+        contains.
+    </div>
+
+    <div class="col-md-6">
+        <h3>Forum Post</h3>
+
+        <blockquote>
+            <p id="toSelect">${textToCode}</p>
+        </blockquote>
+    </div>
+
+    <form action="https://www.mturk.com/mturk/externalSubmit" id="mturk_form" method="post" name="mturk_form"><input
+            id="assignmentId" name="assignmentId" type="hidden" value=""/> <input id="postId" name="postId"
+                                                                                  type="hidden" value="${postId}"/>
+        <input id="forumName" input="" name="forumName" type="hidden" value="${forumName}"/>
+        <div class="stage1">
+            <div class="col-md-6">
+                <h3>Chatting</h3>
+
+                <div class="bg-info padme">
+                    <p>Use your mouse to highlight up to five words or phrases in the post that are evidence of <b>chatting</b>
+                        (there may not be any!). <input id="selectedChatText" name="selectedChatText" type="text"
+                                                        value=""/></p>
+                </div>
+                &nbsp;
+
+                <div class="clearfix bg-info padme">How much <b>chatting</b> does this forum post provide?
+
+                    <div class="text-center">
+                        <ul class="likert">
+                            <li>None</li>
+                            <li><input name="chatRating"
+                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="1"/></li>
+                            <li><input name="chatRating"
+                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="2"/></li>
+                            <li><input name="chatRating"
+                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="3"/></li>
+                            <li><input name="chatRating"
+                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="4"/></li>
+                            <li><input name="chatRating"
+                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="5"/></li>
+                            <li><input name="chatRating"
+                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="6"/></li>
+                            <li><input name="chatRating"
+                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="7"/></li>
+                            <li>A great deal</li>
+                        </ul>
+                    </div>
+                </div>
+                &nbsp;
+
+                <div>
+                    <button class="btn btn-lg btn-primary advanceButton" disabled="disabled" onclick="$('.stage1').hide();
+                    $('.stage2').show();resetStage();" type="button">Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stage2">
+            <div class="col-md-6">
+                <h3>Humor</h3>
+
+                <div class="bg-info padme">
+                    <p>Use your mouse to highlight up to five words or phrases in the post that are evidence of
+                        <b>humor</b> (there may not be any!). <input id="selectedHumorText" name="selectedHumorText"
+                                                                     type="text" value=""/></p>
+                </div>
+                &nbsp;
+
+                <div class="clearfix bg-info padme">How much <b>humor</b> does this post provide?
+
+                    <div class="text-center">
+                        <ul class="likert">
+                            <li>None</li>
+                            <li><input name="humorRating"
+                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="1"/></li>
+                            <li><input name="humorRating"
+                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="2"/></li>
+                            <li><input name="humorRating"
+                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="3"/></li>
+                            <li><input name="humorRating"
+                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="4"/></li>
+                            <li><input name="humorRating"
+                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="5"/></li>
+                            <li><input name="humorRating"
+                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="6"/></li>
+                            <li><input name="humorRating"
+                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
+                                       value="7"/></li>
+                            <li>A great deal</li>
+                        </ul>
+                    </div>
+                </div>
+                &nbsp;
+
+                <div>
+                    <button class="btn btn-lg btn-default"
+                            onclick="$('.stage2').hide();$('.stage1').show();resetStage();" type="button">&lt;-- Go back
+                    </button>
+                    <button class="btn btn-lg btn-primary advanceButton" disabled="disabled" onclick="$('.stage2').hide();
+                    $('.stage3').show();resetStage();" type="button">Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stage3">
+            <div class="col-md-6">
+                <h3>Groupness</h3>
+
+                <div class="bg-info padme">
+                    <p>Use your mouse to highlight up to five words or phrases in the post that are evidence of <b>groupness</b>
+                        (there may not be any!). <input id="selectedGroupnessText" name="selectedGroupnessText"
+                                                        type="text" value=""/></p>
+                </div>
+                &nbsp;
+
+                <div class="clearfix bg-info padme">How much <b>groupness</b> does this post provide?
+
+                    <div class="text-center">
+                        <ul class="likert">
+                            <li>None</li>
+                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
+                                       type="radio" value="1"/></li>
+                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
+                                       type="radio" value="2"/></li>
+                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
+                                       type="radio" value="3"/></li>
+                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
+                                       type="radio" value="4"/></li>
+                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
+                                       type="radio" value="5"/></li>
+                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
+                                       type="radio" value="6"/></li>
+                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
+                                       type="radio" value="7"/></li>
+                            <li>A great deal</li>
+                        </ul>
+                    </div>
+                </div>
+                &nbsp;
+
+                <div>
+                    <button class="btn btn-lg btn-default"
+                            onclick="$('.stage3').hide();$('.stage2').show();resetStage();" type="button">&lt;-- Go back
+                    </button>
+                    <input class="btn btn-lg btn-primary" disabled="disabled" id="submitButton" name="Submit"
+                           type="submit" value="Submit"/></div>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.1/js/standalone/selectize.min.js"
+        type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.selection/1.0.1/jquery.selection.min.js"
+        type="text/javascript"></script>
+<script type="text/javascript">
+    jQuery.fn.highlight = function (pat) {
+        function innerHighlight(node, pat) {
+            var skip = 0;
+            if (node.nodeType == 3) {
+                var pos = node.data.toUpperCase().indexOf(pat);
+                pos -= (node.data.substr(0, pos).toUpperCase().length - node.data.substr(0, pos).length);
+                if (pos >= 0) {
+                    var spannode = document.createElement('span');
+                    spannode.className = 'highlight';
+                    var middlebit = node.splitText(pos);
+                    var endbit = middlebit.splitText(pat.length);
+                    var middleclone = middlebit.cloneNode(true);
+                    spannode.appendChild(middleclone);
+                    middlebit.parentNode.replaceChild(spannode, middlebit);
+                    skip = 1;
+                }
+            }
+            else if (node.nodeType == 1 && node.childNodes && !/(script|style)/i.test(node.tagName)) {
+                for (var i = 0; i < node.childNodes.length; ++i) {
+                    i += innerHighlight(node.childNodes[i], pat);
+                }
+            }
+            return skip;
+        }
+
+        return this.length && pat && pat.length ? this.each(function () {
+            innerHighlight(this, pat.toUpperCase());
+        }) : this;
+    };
+
+    jQuery.fn.removeHighlight = function (pat) {
+        return this.find("span.highlight").each(function () {
+            if (!pat || pat == $(this).html()) {
+                this.parentNode.firstChild.nodeName;
+                with (this.parentNode) {
+                    replaceChild(this.firstChild, this);
+                    normalize();
+                }
+            }
+        }).end();
+    };
+
+    var $selectedChat;
+    var $selectedHumor;
+    var $selectedGroupness;
+
+    if (typeof jQuery !== 'undefined') {
+        (function ($) {
+            $('#spinner').ajaxStart(function () {
+                $(this).fadeIn();
+            }).ajaxStop(function () {
+                $(this).fadeOut();
+            });
+
+            $('.stage2').hide();
+            $('.stage3').hide();
+
+            $('#toSelect').mouseup(function () {
+                var selector = ($('.stage1').is(':visible')) ? $selectedChat[0] : ($('.stage2').is(':visible')) ? $selectedHumor[0] : $selectedGroupness[0];
+
+                if (selector.selectize.items.length >= 5) return;
+                var selected = $.selection('#toSelect');
+                $('#toSelect').highlight(selected);
+                selector.selectize.createItem(selected);
+                selector.selectize.refreshItems();
+
+
+            });
+            $selectedChat = $('#selectedChatText').selectize({
+                delimiter: ',',
+                persist: false,
+                plugins: ['remove_button'],
+                maxitems: 5,
+                onItemRemove: function (foo, bar) {
+                    $('#toSelect').removeHighlight(foo);
+
+                },
+                create: function (input) {
+                    return {
+                        value: input,
+                        text: input
+                    }
+                }
+
+            });
+
+            $selectedHumor = $('#selectedHumorText').selectize({
+                delimiter: ',',
+                persist: false,
+                plugins: ['remove_button'],
+                maxitems: 5,
+                onItemRemove: function (foo, bar) {
+                    $('#toSelect').removeHighlight(foo);
+
+                },
+                create: function (input) {
+                    return {
+                        value: input,
+                        text: input
+                    }
+                }
+            });
+
+            $selectedGroupness = $('#selectedGroupnessText').selectize({
+                delimiter: ',',
+                persist: false,
+                plugins: ['remove_button'],
+                maxitems: 5,
+                onItemRemove: function (foo, bar) {
+                    $('#toSelect').removeHighlight(foo);
+
+                },
+                create: function (input) {
+                    return {
+                        value: input,
+                        text: input
+                    }
+                }
+            });
+
+
+        })(jQuery);
+    }
+
+    function clearSelection() {
+        if (window.getSelection) {
+            if (window.getSelection().empty) {  // Chrome
+                window.getSelection().empty();
+            } else if (window.getSelection().removeAllRanges) {  // Firefox
+                window.getSelection().removeAllRanges();
+            }
+        } else if (document.selection) {  // IE?
+            document.selection.empty();
+        }
+    }
+
+    function resetStage() {
+        $('#toSelect').removeHighlight();
+        var selectBox = ($('.stage1').is(':visible')) ? $selectedChat[0] : ($('.stage2').is(':visible')) ? $selectedHumor[0] : $selectedGroupness[0];
+        selectBox.selectize.items.forEach(function (item) {
+            $('#toSelect').highlight(item)
+        });
+        //weird - sometimes this leaves a selection
+        clearSelection()
+
+    }
+
+    turkSetAssignmentID();
+</script><!-- close container -->
+<style type="text/css">fieldset {
+    padding: 10px;
+    background: #fbfbfb;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+
+}
+
+p {
+    line-height: 1.4em;
+}
+
+.padme-v {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.padme-h {
+    padding-right: 15px;
+    padding-left: 15px;
+
+}
+
+.padme {
+    padding: 15px;
+}
+
+.likert li {
+    padding: 5px;
+    float: left;
+    list-style-type: none;
+}
+
+.clearfloat {
+    float: none;
+}
+
+.highlight {
+    background-color: yellow;
+}
+
+#toSelect {
+    max-height: 600px;
+    overflow-y: scroll;
+}
+</style>
+
+
+</body>
+</html>
