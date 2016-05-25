@@ -1,0 +1,45 @@
+<!-- Bootstrap v3.0.3 -->
+<link href="https://s3.amazonaws.com/mturk-public/bs30/css/bootstrap.min.css" rel="stylesheet" />
+<section class="container" id="DataCollection" style="margin-bottom:15px; padding: 10px 10px; font-family: Verdana, Geneva, sans-serif; color:#333333; font-size:0.9em;">
+<div class="row col-xs-12 col-md-12"><!-- Instructions -->
+<div class="panel panel-primary">
+<div class="panel-heading"><strong>Instructions</strong></div>
+
+<div class="panel-body">
+<p>Find the website address for this restaurant.</p>
+
+<ul>
+	<li>Enter the website address for the <strong>official website </strong>of the restaurant.</li>
+	<li>Include the full address, e.g. http://www.thecheesecakefactory.com.</li>
+	<li><strong>Do not </strong>include URLs to city guides and listings like Citysearch.</li>
+</ul>
+</div>
+</div>
+
+<table>
+	<tbody>
+		<tr>
+			<td><label>Restaurant name:</label></td>
+			<td>${name}</td>
+		</tr>
+		<tr>
+			<td><label>Address:</label></td>
+			<td>${address}</td>
+		</tr>
+		<tr>
+			<td><label>Phone number:</label></td>
+			<td>${phone}</td>
+		</tr>
+	</tbody>
+</table>
+&nbsp;
+
+<div><label>Website address:</label> <input class="form-control" id="web_url" name="web_url" placeholder="http://" type="text" /></div>
+</div>
+</section>
+<!-- close container -->
+<style type="text/css">td {
+    font-size:1.0em;
+    padding: 5px 5px;
+}
+</style>

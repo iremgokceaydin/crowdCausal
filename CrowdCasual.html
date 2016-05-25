@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.1/css/selectize.min.css" rel="stylesheet"/>
+
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	<script type="text/javascript" src="https://s3.amazonaws.com/mturk-public/bs30/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://cdn.rawgit.com/bartaz/sandbox.js/master/jquery.highlight.js"></script>
+	<script type="text/javascript" src="https://cdn.rawgit.com/madapaja/jquery.selection/master/src/jquery.selection.js"></script>
+	<script type="text/javascript" src="https://cdn.rawgit.com/selectize/selectize.js/master/dist/js/standalone/selectize.js"></script>
+
+	
+
+	<style type="text/css">
+		td {
+		    font-size:1.0em;
+		    padding: 5px 5px;
+		}
+		
+		.highlight {
+	    	background-color: #FFFF88;
+		}
+
+		#posts{
+			background-color: #f7f7f9;
+		    border: 1px solid #e1e1e8;
+		    border-radius: 4px;
+			max-height: 400px;
+			margin: 5px;
+			max-height: 400px;
+			overflow-y: auto;
+		}
+
+		.post{
+			background-color: #d9edf7;
+		    border: 1px solid #e1e1e8;
+		    border-radius: 4px;
+			margin: 5px;
+			padding: 3px;
+			opacity: 0.6;
+		    filter: alpha(opacity=60); /* For IE8 and earlier */
+		}
+
+		.results{
+			margin: 5px;
+			background-color: rgba(86,61,124,.15);
+		    border: 1px solid rgba(86,61,124,.2);
+		    border-radius: 4px;
+		}
+
+		.current{    
+	    	border: 2px solid #4E4E4E;
+		    opacity: 0.9;
+		    filter: alpha(opacity=0.9);
+		    box-shadow: 3px 3px 3px #888888;  
+		}
+
+		.resultCausal{
+
+		}
+
+		/* Icon when the collapsible content is shown */
+		#collapseSelective:after {
+			font-family: "Glyphicons Halflings";
+			content: "\e114";
+			float: right;
+		}
+		/* Icon when the collapsible content is hidden */
+		#collapseSelective.collapsed:after {
+			content: "\e080";
+		}
+	</style>
+</head>
+<body>
+
+	<section class="container" id="CrowdCasual" style="margin-bottom:15px; padding: 10px 10px; font-family: Verdana, Geneva, sans-serif; color:#333333; font-size:0.9em;">
+		<div class="row col-xs-12 col-md-12">
+			<div class="panel panel-primary"><!-- Instructions -->
+				<div class="panel-heading"><strong>Instructions</strong></div>
+
+				<div class="panel-body">
+					<p id="here">Casual Relationship</p>
+
+					<ul>
+						<li>Select <strong>causes </strong> and <strong>effects </strong> among the posts</li>
+						<li>Instruction 2</li>
+						<li>Instruction 3</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<div class="row col-xs-12 col-md-12">
+			<div class="col-md-6">
+				<div class="row">
+					<h3>TASKS & CONTROLS</h3>
+					<button id="prevPost" type="button" class="btn btn-primary">Previous Post</button>
+					<button id="nextPost" type="button" class="btn btn-primary">Next Post</button>
+				</div>
+
+				<div class="row">
+					<div id="posts">
+						<div class="post current">
+							<p id="post-1">The kids won't stop screaming, your boss has been hounding you because you turned a report in late, and you owe the IRS thousands of dollars you don't have. You're seriously stressed out.</p>
+						</div>
+						<div class="post">
+							<p id="post-2">The kids won't stop screaming, your boss has been hounding you because you turned a report in late, and you owe the IRS thousands of dollars you don't have. You're seriously stressed out.</p>
+						</div>
+						<div class="post">
+							<p id="post-3">The kids won't stop screaming, your boss has been hounding you because you turned a report in late, and you owe the IRS thousands of dollars you don't have. You're seriously stressed out.</p>
+						</div>
+						<div class="post">
+							<p id="post-4">The kids won't stop screaming, your boss has been hounding you because you turned a report in late, and you owe the IRS thousands of dollars you don't have. You're seriously stressed out.</p>
+						</div>
+						<div class="post">
+							<p id="post-5">The kids won't stop screaming, your boss has been hounding you because you turned a report in late, and you owe the IRS thousands of dollars you don't have. You're seriously stressed out.</p>
+						</div>
+						<div class="post">
+							<p id="post-6">The kids won't stop screaming, your boss has been hounding you because you turned a report in late, and you owe the IRS thousands of dollars you don't have. You're seriously stressed out.</p>
+						</div>	
+					</div>	
+				</div>
+
+			</div>
+
+			<div class="col-md-6">
+				<div class="row">
+					<h3>TASKS & CONTROLS</h3>
+					<button id="addCausal" type="button" class="btn btn-primary">Add</button>
+				</div>
+				<div class="row">
+					<div class="results">
+						<div class="result currentSelective">
+							<button data-toggle="collapse" id="collapseSelective" class="btn btn-info" data-target="#collapse-1"></button>
+							<div class="collapse in" id="collapse-1">
+								<input type="text" id="resultCausal" value="">
+							</div>
+							<p>Resulted text here</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- close container -->
+	
+	<script type="text/javascript">
+		//var currentColor = getRandomColor();
+
+		$('#resultCausal').selectize({
+		    plugins: ['remove_button'],
+		    delimiter: ',',
+		    persist: false,
+		    create: function(input) {
+		        return {
+		            value: input,
+		            text: input
+		        }
+		    },
+		    onItemRemove: function (value) {
+                $('.current').removeHighlight(value);
+                $('.currentSelective p').html($('#resultCausal')[0].selectize.items.join(" "));
+            },
+		});
+
+		$('#posts').click(function(){
+		    var selectedText = $.selection();
+		    //alert(selectedText);
+		    $('.current p').highlight(selectedText,{ wordsOnly: true });
+		    $('#resultCausal')[0].selectize.createItem(selectedText);
+		    $('.currentSelective p').html($('#resultCausal')[0].selectize.items.join(" "));
+		    //alert($(".selectize-input div").last().css("background-color",));
+		});
+
+		$('#nextPost').click(function() {
+	        if($('.current').next().length > 0){
+		        var next = $('.current').next();
+		        $('.current').removeClass("current"); 
+		        next.addClass("current");
+		        $("#posts").scrollTop($("#posts").scrollTop() + 100);
+		    }
+        });
+
+        $('#prevPost').click(function() {
+        	if($('.current').prev().length > 0){
+		        var prev = $('.current').prev();
+		        $('.current').removeClass("current"); 
+		        prev.addClass("current");
+		        $("#posts").scrollTop($("#posts").scrollTop() - 100);
+		    }
+        });
+
+        jQuery.fn.removeHighlight = function (pat) {
+        return this.find("span.highlight").each(function () {
+            if (!pat || pat.toUpperCase() == $(this).html().toUpperCase()) {
+                this.parentNode.firstChild.nodeName;
+                with (this.parentNode) {
+                    replaceChild(this.firstChild, this);
+                    normalize();
+                }
+            }
+        }).end();
+
+        function getRandomColor() {
+		    var letters = '0123456789ABCDEF'.split('');
+		    var color = '#';
+		    for (var i = 0; i < 6; i++ ) {
+		        color += letters[Math.floor(Math.random() * 16)];
+		    }
+		    return color;
+		}
+    };
+
+        
+	</script>
+
+</body>
+</html>

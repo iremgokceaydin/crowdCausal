@@ -31,7 +31,7 @@
         <h3>Forum Post</h3>
 
         <blockquote>
-            <p id="toSelect">${textToCode}</p>
+            <p id="toSelect">${textToCode} you you</p>
         </blockquote>
     </div>
 
@@ -50,142 +50,12 @@
                 </div>
                 &nbsp;
 
-                <div class="clearfix bg-info padme">How much <b>chatting</b> does this forum post provide?
-
-                    <div class="text-center">
-                        <ul class="likert">
-                            <li>None</li>
-                            <li><input name="chatRating"
-                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="1"/></li>
-                            <li><input name="chatRating"
-                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="2"/></li>
-                            <li><input name="chatRating"
-                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="3"/></li>
-                            <li><input name="chatRating"
-                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="4"/></li>
-                            <li><input name="chatRating"
-                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="5"/></li>
-                            <li><input name="chatRating"
-                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="6"/></li>
-                            <li><input name="chatRating"
-                                       onchange="jQuery('.stage1 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="7"/></li>
-                            <li>A great deal</li>
-                        </ul>
-                    </div>
-                </div>
-                &nbsp;
 
                 <div>
                     <button class="btn btn-lg btn-primary advanceButton" disabled="disabled" onclick="$('.stage1').hide();
                     $('.stage2').show();resetStage();" type="button">Continue
                     </button>
                 </div>
-            </div>
-        </div>
-
-        <div class="stage2">
-            <div class="col-md-6">
-                <h3>Humor</h3>
-
-                <div class="bg-info padme">
-                    <p>Use your mouse to highlight up to five words or phrases in the post that are evidence of
-                        <b>humor</b> (there may not be any!). <input id="selectedHumorText" name="selectedHumorText"
-                                                                     type="text" value=""/></p>
-                </div>
-                &nbsp;
-
-                <div class="clearfix bg-info padme">How much <b>humor</b> does this post provide?
-
-                    <div class="text-center">
-                        <ul class="likert">
-                            <li>None</li>
-                            <li><input name="humorRating"
-                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="1"/></li>
-                            <li><input name="humorRating"
-                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="2"/></li>
-                            <li><input name="humorRating"
-                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="3"/></li>
-                            <li><input name="humorRating"
-                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="4"/></li>
-                            <li><input name="humorRating"
-                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="5"/></li>
-                            <li><input name="humorRating"
-                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="6"/></li>
-                            <li><input name="humorRating"
-                                       onchange="jQuery('.stage2 .advanceButton').prop('disabled',false);" type="radio"
-                                       value="7"/></li>
-                            <li>A great deal</li>
-                        </ul>
-                    </div>
-                </div>
-                &nbsp;
-
-                <div>
-                    <button class="btn btn-lg btn-default"
-                            onclick="$('.stage2').hide();$('.stage1').show();resetStage();" type="button">&lt;-- Go back
-                    </button>
-                    <button class="btn btn-lg btn-primary advanceButton" disabled="disabled" onclick="$('.stage2').hide();
-                    $('.stage3').show();resetStage();" type="button">Continue
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="stage3">
-            <div class="col-md-6">
-                <h3>Groupness</h3>
-
-                <div class="bg-info padme">
-                    <p>Use your mouse to highlight up to five words or phrases in the post that are evidence of <b>groupness</b>
-                        (there may not be any!). <input id="selectedGroupnessText" name="selectedGroupnessText"
-                                                        type="text" value=""/></p>
-                </div>
-                &nbsp;
-
-                <div class="clearfix bg-info padme">How much <b>groupness</b> does this post provide?
-
-                    <div class="text-center">
-                        <ul class="likert">
-                            <li>None</li>
-                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
-                                       type="radio" value="1"/></li>
-                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
-                                       type="radio" value="2"/></li>
-                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
-                                       type="radio" value="3"/></li>
-                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
-                                       type="radio" value="4"/></li>
-                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
-                                       type="radio" value="5"/></li>
-                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
-                                       type="radio" value="6"/></li>
-                            <li><input name="groupnessRating" onchange="jQuery('#submitButton').prop('disabled',false);"
-                                       type="radio" value="7"/></li>
-                            <li>A great deal</li>
-                        </ul>
-                    </div>
-                </div>
-                &nbsp;
-
-                <div>
-                    <button class="btn btn-lg btn-default"
-                            onclick="$('.stage3').hide();$('.stage2').show();resetStage();" type="button">&lt;-- Go back
-                    </button>
-                    <input class="btn btn-lg btn-primary" disabled="disabled" id="submitButton" name="Submit"
-                           type="submit" value="Submit"/></div>
             </div>
         </div>
     </form>
