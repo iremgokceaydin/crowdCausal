@@ -3,7 +3,7 @@
 <head>
 	<title></title>
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.1/css/selectize.min.css" rel="stylesheet"/>
+	<link href="https://cdn.rawgit.com/selectize/selectize.js/master/dist/css/selectize.default.css" rel="stylesheet"/>
 
 	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 	<script type="text/javascript" src="https://s3.amazonaws.com/mturk-public/bs30/js/bootstrap.min.js"></script>
@@ -43,22 +43,30 @@
 		    filter: alpha(opacity=60); /* For IE8 and earlier */
 		}
 
-		.results{
+		#results{
 			margin: 5px;
 			background-color: rgba(86,61,124,.15);
 		    border: 1px solid rgba(86,61,124,.2);
 		    border-radius: 4px;
 		}
 
-		.current{    
+		.currentPost{    
 	    	border: 2px solid #4E4E4E;
 		    opacity: 0.9;
 		    filter: alpha(opacity=0.9);
 		    box-shadow: 3px 3px 3px #888888;  
 		}
 
-		.resultCausal{
+		.currentResult{    
+	    	border: 2px solid #279AAD;
+		    opacity: 0.9;
+		    filter: alpha(opacity=0.9);
+		    box-shadow: 3px 3px 3px #90B1B9; 
+		    border-radius: 4px; 
+		}
 
+		.result p{
+			margin: 5px;
 		}
 
 		/* Icon when the collapsible content is shown */
@@ -94,31 +102,15 @@
 		<div class="row col-xs-12 col-md-12">
 			<div class="col-md-6">
 				<div class="row">
-					<h3>TASKS & CONTROLS</h3>
+					<h3>POSTS</h3>
+					<h4>Tasks & Controls</h4>
 					<button id="prevPost" type="button" class="btn btn-primary">Previous Post</button>
 					<button id="nextPost" type="button" class="btn btn-primary">Next Post</button>
 				</div>
 
 				<div class="row">
 					<div id="posts">
-						<div class="post current">
-							<p id="post-1">The kids won't stop screaming, your boss has been hounding you because you turned a report in late, and you owe the IRS thousands of dollars you don't have. You're seriously stressed out.</p>
-						</div>
-						<div class="post">
-							<p id="post-2">The kids won't stop screaming, your boss has been hounding you because you turned a report in late, and you owe the IRS thousands of dollars you don't have. You're seriously stressed out.</p>
-						</div>
-						<div class="post">
-							<p id="post-3">The kids won't stop screaming, your boss has been hounding you because you turned a report in late, and you owe the IRS thousands of dollars you don't have. You're seriously stressed out.</p>
-						</div>
-						<div class="post">
-							<p id="post-4">The kids won't stop screaming, your boss has been hounding you because you turned a report in late, and you owe the IRS thousands of dollars you don't have. You're seriously stressed out.</p>
-						</div>
-						<div class="post">
-							<p id="post-5">The kids won't stop screaming, your boss has been hounding you because you turned a report in late, and you owe the IRS thousands of dollars you don't have. You're seriously stressed out.</p>
-						</div>
-						<div class="post">
-							<p id="post-6">The kids won't stop screaming, your boss has been hounding you because you turned a report in late, and you owe the IRS thousands of dollars you don't have. You're seriously stressed out.</p>
-						</div>	
+						
 					</div>	
 				</div>
 
@@ -126,69 +118,153 @@
 
 			<div class="col-md-6">
 				<div class="row">
-					<h3>TASKS & CONTROLS</h3>
+					<h3>CAUSAL RELATIONS</h3>
+					<h4>Tasks & Controls</h4>
 					<button id="addCausal" type="button" class="btn btn-primary">Add</button>
+					<button id="removeCausal" type="button" class="btn btn-primary">Remove</button>
 				</div>
 				<div class="row">
-					<div class="results">
-						<div class="result currentSelective">
-							<button data-toggle="collapse" id="collapseSelective" class="btn btn-info" data-target="#collapse-1"></button>
-							<div class="collapse in" id="collapse-1">
-								<input type="text" id="resultCausal" value="">
-							</div>
-							<p>Resulted text here</p>
-						</div>
+					<div id="results">
 					</div>
 				</div>
 			</div>
 		</div>
 	</section>
 	<!-- close container -->
+
+	<input type="hidden" name="hit_data" id="hit_data" value="">
+	<!-- <input type="hidden" name="hit_data" value='$(hitData)'> -->
 	
 	<script type="text/javascript">
 		//var currentColor = getRandomColor();
+		function getRandomColor() {
+		    var letters = '0123456789ABCDEF'.split('');
+		    var color = '#';
+		    for (var i = 0; i < 6; i++ ) {
+		        color += letters[Math.floor(Math.random() * 16)];
+		    }
+		    return color;
+		}
 
-		$('#resultCausal').selectize({
-		    plugins: ['remove_button'],
-		    delimiter: ',',
-		    persist: false,
-		    create: function(input) {
-		        return {
-		            value: input,
-		            text: input
-		        }
-		    },
-		    onItemRemove: function (value) {
-                $('.current').removeHighlight(value);
-                $('.currentSelective p').html($('#resultCausal')[0].selectize.items.join(" "));
-            },
-		});
+		//start of simulation of getting the hit data from cvs on AMT
+		var hitData = "The kids won't stop screaming, your boss has been hounding you because you turned a report in late, and you owe the IRS thousands of dollars you don't have. You're seriously stressed out. | Stress is actually a normal part of life. At times, it serves a useful purpose. Stress can motivate you to get that promotion at work, or run the last mile of a marathon. But if you don't get a handle on your stress and it becomes long-term, it can seriously interfere with your job, family life, and health. More than half of Americans say they fight with friends and loved ones because of stress, and more than 70% say they experience real physical and emotional symptoms from it. | Sometimes the stress comes from inside, rather than outside. You can stress yourself out just by worrying about things. All of these factors can lead to stress. | When you regularly hear about the threat of terrorist attacks, global warming, and toxic chemicals on the news, it can cause you to feel  stressed, especially because you feel like you have no control over those events. And even though disasters are typically very rare events, their vivid coverage in the media may make them seem as if they are more likely to occur than they really are. Fears can also hit closer to home, such as being worried that you won't finish a project at work or won't have enough money to pay your bills this month. | How you view the world or a particular situation can determine whether it causes stress. For example, if your television set is stolen and you take the attitude, It's OK, my insurance company will pay for a new one, you'll be far less stressed than if you think, My TV is gone and I'll never get it back! What if the thieves come back to my house to steal again?";
+
+		$("#hit_data").val(hitData); //reverse this process
+
+		var sentences = hitData.split(" | "); //or groups of sentences according to the delimeter
+		sentences.forEach(createPosts);
+		$($("#posts div:first-child")[0]).addClass("currentPost");
+		//end of simulation of getting the hit data from cvs on AMT
+
+		function createPosts(sentence, index){
+			var div = $("<div>", {id: "post-"+index, class: "post", postColor: getRandomColor()});
+			var p = $("<p>");
+			p.html(sentence);
+			div.append(p);
+			$("#posts").append(div);
+			$(div).click(function(){
+				$(".currentPost").removeClass("currentPost");
+				$(this).addClass("currentPost");
+			    //alert($(".selectize-input div").last().css("background-color",));
+			});
+		}
+
+		var causalIndex = 0;
+		function createCausal(){
+			var div = $("<div>", {id: "result-"+causalIndex, class: "result"});
+			var button = $("<button>", {'data-toggle':"collapse", id:"collapseSelective", class:"btn btn-info", 'data-target':"#collapse-" + causalIndex});
+			var divInner = $("<div>", {id: "collapse-"+causalIndex, class: "collapse in"});
+			var input = $("<input>", {type: "text"});
+			var p = $("<p>");
+			divInner.append(input);
+			div.append(button);
+			div.append(divInner);
+			div.append(p);
+			$("#results").append(div);
+	
+			$(input).selectize({
+			    plugins: ['remove_button'],
+			    delimiter: ',',
+			    persist: false,
+			    create: function(input) {
+			        return {
+			            value: input,
+			            text: input
+			        }
+			    },
+			    onItemRemove: function (value) {
+	                $('.currentPost').removeHighlight(value);
+	                $('.currentResult p').html($('.currentResult input')[0].selectize.items.join(" "));
+	            },
+			});
+
+			$("#results div").removeClass("currentResult");
+			$($("#results>div:last-child")[0]).addClass("currentResult");
+
+			$(div).click(function(){
+				$(".currentResult").removeClass("currentResult");
+				$(this).addClass("currentResult");
+			});
+			causalIndex++;
+		}
+
+		function removeCausal(){
+			clearReferencedWordsFromPosts();
+			$('.currentResult').remove();
+			$($("#results>div:first-child")[0]).addClass("currentResult");
+			//TODO: fix the causalIndex
+		}
 
 		$('#posts').click(function(){
 		    var selectedText = $.selection();
-		    //alert(selectedText);
-		    $('.current p').highlight(selectedText,{ wordsOnly: true });
-		    $('#resultCausal')[0].selectize.createItem(selectedText);
-		    $('.currentSelective p').html($('#resultCausal')[0].selectize.items.join(" "));
-		    //alert($(".selectize-input div").last().css("background-color",));
+		    if(selectedText){
+			    $('.currentPost p').highlight(selectedText);//{ wordsOnly: true } , {className: 'error' }
+			    $('.currentPost .highlight').css("background-color", $('.currentPost').attr('postColor'));
+			    $('.currentResult input')[0].selectize.createItem(selectedText);
+			    $('.currentResult .selectize-input div').last().attr("id", $('.currentResult').attr("id") + "-casual-"+($('.currentResult .selectize-input div').length-1));
+			    $("span:contains('" + selectedText + "')").each(
+			    	function(index, elem){
+			    		$(this).attr("referencedCasual",$('.currentResult .selectize-input div').last().attr("id"));
+		    		});
+			    $('.currentResult .selectize-input div').last().css('background-image',"none");
+			    $('.currentResult .selectize-input div').last().css('background-color', $('.currentPost').attr('postColor'));
+			    $('.currentResult p').html($('.currentResult input')[0].selectize.items.join(" "));
+			}
 		});
 
+		function clearReferencedWordsFromPosts(){
+			$('.currentResult .selectize-input div').each(
+				function(index, elem){
+					$("span[referencedCasual='"+ elem.id +"'").each(function(index,elem){ //TODO: there are duplicates!! Trace on span with the same value only once!! 
+						$(elem).parent().removeHighlight($(elem).attr("data-value"));
+					});
+				});
+		}
+
 		$('#nextPost').click(function() {
-	        if($('.current').next().length > 0){
-		        var next = $('.current').next();
-		        $('.current').removeClass("current"); 
-		        next.addClass("current");
+	        if($('.currentPost').next().length > 0){
+		        var next = $('.currentPost').next();
+		        $('.currentPost').removeClass("currentPost"); 
+		        next.addClass("currentPost");
 		        $("#posts").scrollTop($("#posts").scrollTop() + 100);
 		    }
         });
 
         $('#prevPost').click(function() {
-        	if($('.current').prev().length > 0){
-		        var prev = $('.current').prev();
-		        $('.current').removeClass("current"); 
-		        prev.addClass("current");
+        	if($('.currentPost').prev().length > 0){
+		        var prev = $('.currentPost').prev();
+		        $('.currentPost').removeClass("currentPost"); 
+		        prev.addClass("currentPost");
 		        $("#posts").scrollTop($("#posts").scrollTop() - 100);
 		    }
+        });
+
+        $('#addCausal').click(function() {
+        	createCausal();
+        });
+
+        $('#removeCausal').click(function() {
+        	removeCausal();
         });
 
         jQuery.fn.removeHighlight = function (pat) {
@@ -201,19 +277,10 @@
                 }
             }
         }).end();
-
-        function getRandomColor() {
-		    var letters = '0123456789ABCDEF'.split('');
-		    var color = '#';
-		    for (var i = 0; i < 6; i++ ) {
-		        color += letters[Math.floor(Math.random() * 16)];
-		    }
-		    return color;
-		}
     };
 
         
 	</script>
-
+	
 </body>
 </html>
