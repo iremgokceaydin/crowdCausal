@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title></title>
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link href="https://cdn.rawgit.com/selectize/selectize.js/master/dist/css/selectize.default.css" rel="stylesheet"/>
 
 	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
@@ -29,7 +29,6 @@
 		    border-radius: 4px;
 			max-height: 400px;
 			margin: 5px;
-			max-height: 400px;
 			overflow-y: auto;
 		}
 
@@ -48,6 +47,8 @@
 			background-color: rgba(86,61,124,.15);
 		    border: 1px solid rgba(86,61,124,.2);
 		    border-radius: 4px;
+		    max-height: 400px;
+			overflow-y: auto;
 		}
 
 		.currentPost{    
@@ -63,6 +64,12 @@
 		    filter: alpha(opacity=0.9);
 		    box-shadow: 3px 3px 3px #90B1B9; 
 		    border-radius: 4px; 
+		}
+
+		.result{
+			margin: 5px;
+		    background-color: rgba(91, 192, 222, 0.54);
+		    border-radius: 4px;
 		}
 
 		.result p{
@@ -89,11 +96,12 @@
 				<div class="panel-heading"><strong>Instructions</strong></div>
 
 				<div class="panel-body">
-					<p id="here">Casual Relationship</p>
+					<p id="here">This is a task of identfying casual relationship among the texts in the posts.</p>
 
 					<ul>
+						<li><strong>Add</strong> new <strong>causal relation </strong></li>
 						<li>Select <strong>causes </strong> and <strong>effects </strong> among the posts</li>
-						<li>Instruction 2</li>
+						<li>You can collapse the causal relationships</li>
 						<li>Instruction 3</li>
 					</ul>
 				</div>
@@ -124,11 +132,15 @@
 					<button id="removeCausal" type="button" class="btn btn-primary">Remove</button>
 				</div>
 				<div class="row">
-					<div id="results">
-					</div>
+					<!-- <form action="https://www.mturk.com/mturk/externalSubmit" id="mturk_form" method="post" name="mturk_form"> --> 
+						<div id="results">
+						</div>
+					<!-- </form> -->
 				</div>
 			</div>
 		</div>
+
+		<button class="btn btn-lg btn-primary" style="float:right" disabled="disabled" onclick="" type="button">Submit</button>
 	</section>
 	<!-- close container -->
 
