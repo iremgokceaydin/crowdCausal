@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+
+  <style type="text/css">
+    button:after {
+    /* symbol for "opening" panels */
+        font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
+        content: "\e114";    /* adjust as needed, taken from bootstrap.css */
+        float: right;        /* adjust as needed */
+        color: grey;         /* adjust as needed */
+    }
+    button.collapsed:after {
+    /* symbol for "collapsed" panels */
+    content: "\e080";    /* adjust as needed, taken from bootstrap.css */
+    }
+
+  </style>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link href="https://cdn.rawgit.com/selectize/selectize.js/master/dist/css/selectize.default.css" rel="stylesheet"/>
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+  <script type="text/javascript" src="https://s3.amazonaws.com/mturk-public/bs30/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://cdn.rawgit.com/bartaz/sandbox.js/master/jquery.highlight.js"></script>
+  <script type="text/javascript" src="https://cdn.rawgit.com/madapaja/jquery.selection/master/src/jquery.selection.js"></script>
+  <script type="text/javascript" src="https://cdn.rawgit.com/selectize/selectize.js/master/dist/js/standalone/selectize.js"></script>
+</head>
+<body>
+<div class="panel-group" id="accordion">
+  <div class="panel">
+    <button data-toggle="collapse" class="collapsed" data-parent="#accordion" data-target="#collapseOne">
+      Collapsible Group Item #1
+    </button>
+    <div id="collapseOne" class="collapse">
+        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+    </div>
+  </div>
+  <div class="panel">
+    <button data-toggle="collapse" class="collapsed" data-parent="#accordion" data-target="#collapseTwo">
+      Collapsible Group Item #2
+    </button>
+    <div id="collapseTwo" class="collapse">
+        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+    </div>
+  </div>
+  <div class="panel">
+    <button data-toggle="collapse" class="collapsed" data-parent="#accordion" data-target="#collapseThree">
+      Collapsible Group Item #3
+    </button>
+    <div id="collapseThree" class="collapse">
+        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+    </div>
+  </div>
+</div>
+<button type="button" class="btn btn-primary" onclick="createIt()">Add</button>
+
+<script type="text/javascript">
+  var causalIndex = 0;
+
+  function createIt(){
+      $('#accordion .in').collapse("hide");
+      $('#accordion button').addClass("collapsed");
+      var div = $("<div>", {class: "panel"});
+      var a = $("<button>", {'data-toggle':"collapse", 'data-target':"#collapse-"+causalIndex, 'data-parent':"#accordion"});  //
+      $(a).html("irem");
+      var divInner = $("<div>", {id: "collapse-"+causalIndex, class: "collapse in"});
+      $(divInner).html("gokce");
+      $(divInner).collapse({"toggle": false, 'parent': '#accordion'});
+      div.append(a);
+      div.append(divInner);
+      $("#accordion").append(div);
+      causalIndex++;
+    }
+
+
+</script>
+</body>
+</html>

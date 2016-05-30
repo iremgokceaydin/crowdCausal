@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+	<title>CrowdCausal</title>
+	
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css">
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 	<link href="https://cdn.rawgit.com/selectize/selectize.js/master/dist/css/selectize.default.css" rel="stylesheet"/>
 
 	<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	<script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 	<script type="text/javascript" src="https://s3.amazonaws.com/mturk-public/bs30/js/bootstrap.min.js"></script>
 	<script type="text/javascript" src="https://cdn.rawgit.com/bartaz/sandbox.js/master/jquery.highlight.js"></script>
 	<script type="text/javascript" src="https://cdn.rawgit.com/madapaja/jquery.selection/master/src/jquery.selection.js"></script>
@@ -51,11 +57,18 @@
 			overflow-y: auto;
 		}
 
+		.latestPost{
+			box-shadow: 3px 3px 3px #888888;
+			background-color: #BDE2F5; 
+			opacity: 0.9;
+		    filter: alpha(opacity=0.9);
+		}
+
 		.currentPost{    
 	    	border: 2px solid #4E4E4E;
 		    opacity: 0.9;
 		    filter: alpha(opacity=0.9);
-		    box-shadow: 3px 3px 3px #888888;  
+		    box-shadow: 2px 2px 2px #888888;  
 		}
 
 		.currentResult{    
@@ -72,19 +85,34 @@
 		    border-radius: 4px;
 		}
 
-		.result p{
-			margin: 5px;
+		.result textarea{
+			resize: vertical;
+			background-color: rgb(163, 210, 229);
 		}
 
 		/* Icon when the collapsible content is shown */
 		#collapseSelective:after {
 			font-family: "Glyphicons Halflings";
 			content: "\e114";
-			float: right;
+			float: left;
 		}
 		/* Icon when the collapsible content is hidden */
 		#collapseSelective.collapsed:after {
 			content: "\e080";
+		}
+
+		.alertMsg{
+			color: red;
+		}
+
+		.editingDone{
+   			display: block;
+   			text-align: center;
+		}
+
+		.disabledWords{
+			pointer-events: none;
+    		opacity: 0.5;
 		}
 	</style>
 </head>
@@ -112,8 +140,8 @@
 				<div class="row">
 					<h3>POSTS</h3>
 					<h4>Tasks & Controls</h4>
-					<button id="prevPost" type="button" class="btn btn-primary">Previous Post</button>
-					<button id="nextPost" type="button" class="btn btn-primary">Next Post</button>
+					<div class="alertMsg" id="addCausalAlert" style="display:none;">Add causal item first from the panel on the right.</div>
+					<!-- <button id="prevPost" type="button" class="btn btn-primary">Previous Post</button> -->
 				</div>
 
 				<div class="row">
@@ -130,10 +158,11 @@
 					<h4>Tasks & Controls</h4>
 					<button id="addCausal" type="button" class="btn btn-primary">Add</button>
 					<button id="removeCausal" type="button" class="btn btn-primary">Remove</button>
+					<button id="addCausal" type="button" class="btn btn-primary" style="float:right;">Show All</button>
 				</div>
 				<div class="row">
 					<!-- <form action="https://www.mturk.com/mturk/externalSubmit" id="mturk_form" method="post" name="mturk_form"> --> 
-						<div id="results">
+						<div id="results" class="panel-group">
 						</div>
 					<!-- </form> -->
 				</div>
@@ -165,11 +194,10 @@
 
 		var sentences = hitData.split(" | "); //or groups of sentences according to the delimeter
 		sentences.forEach(createPosts);
-		$($("#posts div:first-child")[0]).addClass("currentPost");
 		//end of simulation of getting the hit data from cvs on AMT
 
 		function createPosts(sentence, index){
-			var div = $("<div>", {id: "post-"+index, class: "post", postColor: getRandomColor()});
+			var div = $("<div>", {id: "post-"+index, class: "post"});
 			var p = $("<p>");
 			p.html(sentence);
 			div.append(p);
@@ -177,25 +205,42 @@
 			$(div).click(function(){
 				$(".currentPost").removeClass("currentPost");
 				$(this).addClass("currentPost");
-			    //alert($(".selectize-input div").last().css("background-color",));
 			});
+			if(index == sentences.length-1){
+				$(div).addClass("currentPost");
+				$(div).addClass("latestPost");
+			}
+			focusOnTheLatest();
 		}
 
 		var causalIndex = 0;
+		var wordAndReferencesMap = [];
+		var selectedWordtoShowHighlights = false;
+		var lastItemToHighlightPost;
 		function createCausal(){
-			var div = $("<div>", {id: "result-"+causalIndex, class: "result"});
-			var button = $("<button>", {'data-toggle':"collapse", id:"collapseSelective", class:"btn btn-info", 'data-target':"#collapse-" + causalIndex});
+			collapseCurrent();
+
+			var div = $("<div>", {id: "result-"+causalIndex, class: "panel result"});
+			var button = $("<button>", {'data-toggle':"collapse", id:"collapseSelective", class:"btn btn-info", 'data-parent':"#results", 'data-target':"#collapse-"+causalIndex, style:"width:100%;"});  //
 			var divInner = $("<div>", {id: "collapse-"+causalIndex, class: "collapse in"});
+			$(divInner).collapse({"toggle": false, 'parent': '#results'});
 			var input = $("<input>", {type: "text"});
-			var p = $("<p>");
+			var a = $("<a>", {class: "editingDone", href:''});
+			a.html('<span class="glyphicon glyphicon-ok"></span>Done Adding (& Enable Editing)');
+			var textArea = $("<textarea>", {class:"form-control", rows:"1", id:"comment", readonly:''});
 			divInner.append(input);
+			divInner.append(a);
 			div.append(button);
 			div.append(divInner);
-			div.append(p);
+			div.append(textArea);
 			$("#results").append(div);
-	
+
+			$('.selectize-input input').attr('readonly','');
+			$(div).addClass("currentResult");
+			causalIndex++; //TODO: always increasing although some causal relationship elements are removed!!but it's alright!
+		
 			$(input).selectize({
-			    plugins: ['remove_button'],
+			    plugins: ['drag_drop','remove_button'],
 			    delimiter: ',',
 			    persist: false,
 			    create: function(input) {
@@ -204,72 +249,172 @@
 			            text: input
 			        }
 			    },
-			    onItemRemove: function (value) {
-	                $('.currentPost').removeHighlight(value);
-	                $('.currentResult p').html($('.currentResult input')[0].selectize.items.join(" "));
+			    onItemAdd: function (value, item) {
+			    	$(item).click(function(e){
+			    		var target = e.target || e.srcElement;
+			    		if(target.tagName != "A"){ //if cross is clicked to remove a word
+				    		if(selectedWordtoShowHighlights && lastItemToHighlightPost == $(item).attr('data-value')){
+				    			$(item).removeClass('active');
+				    			selectedWordtoShowHighlights = false;
+				    			highlightForOnlyOneResult();
+				    		}
+				    		else{
+				    			clearReferencedWordsFromPosts();
+				    			highlightForOneItem(item);
+				    			selectedWordtoShowHighlights = true;
+				    			lastItemToHighlightPost = $(item).attr('data-value');
+				    		}
+			    		}
+			    	});
+			    },
+			    onItemRemove: function (value, item) {
+			    	//alert(value + '-' + $(item).attr('referencedPost'));
+			    	wordAndReferencesMap.forEach(function(elem,index){
+						if(elem['data-value'] == $(item).attr('data-value') && elem['referencedResult'] == $('.currentResult').attr('id')){
+							wordAndReferencesMap.splice(index,1);	
+							return;
+						}
+					});
+	                $('#' + $(item).attr('referencedPost')).removeHighlight(value);
+	                $('.currentResult textarea').val($('.currentResult textarea').val().replace(value,''));
+	                if(lastItemToHighlightPost == $(item).attr('data-value')){
+						highlightForOnlyOneResult();
+						selectedWordtoShowHighlights = false;
+	                }
 	            },
+	            onChange: function (value){ //calling onItemRemove as well
+	            	$('.currentResult textarea').val($('.currentResult input')[0].selectize.items.join(" "));	
+	            	wordAndReferencesMap.forEach(function(elem,index){
+	            		$('.currentResult .items .item').each(function (index,item){
+	            			if(elem['data-value'] == $(item).attr('data-value') && elem['referencedResult'] == $('.currentResult').attr('id')){
+								$(item).attr('referencedPost', elem['postReference']);	
+								return;
+							}
+	            		});
+					});
+	            }
 			});
 
-			$("#results div").removeClass("currentResult");
-			$($("#results>div:last-child")[0]).addClass("currentResult");
-
-			$(div).click(function(){
-				$(".currentResult").removeClass("currentResult");
-				$(this).addClass("currentResult");
+			$(a).click(function(e){
+				$('.currentResult textarea').removeAttr('readonly');
+	        	$('.currentResult .selectize-control').addClass("disabledWords");
+	        	$(this).bind('click', function(e){
+				    e.preventDefault();
+				})
+				return false;
 			});
-			causalIndex++;
+
+			$(div).find("button").click(function(e){ //this div only expandable using collapse icon
+				collapseCurrent();
+				$(this).parent().addClass("currentResult");
+				expandCurrentCollapsed();
+			});
 		}
 
 		function removeCausal(){
 			clearReferencedWordsFromPosts();
+			$('.currentResult').prev().find('button').click();
 			$('.currentResult').remove();
-			$($("#results>div:first-child")[0]).addClass("currentResult");
 			//TODO: fix the causalIndex
+		}
+
+		function focusOnTheLatest(){
+			$('#posts').scrollTop($('#posts')[0].scrollHeight);
 		}
 
 		$('#posts').click(function(){
 		    var selectedText = $.selection();
 		    if(selectedText){
-			    $('.currentPost p').highlight(selectedText);//{ wordsOnly: true } , {className: 'error' }
-			    $('.currentPost .highlight').css("background-color", $('.currentPost').attr('postColor'));
-			    $('.currentResult input')[0].selectize.createItem(selectedText);
-			    $('.currentResult .selectize-input div').last().attr("id", $('.currentResult').attr("id") + "-casual-"+($('.currentResult .selectize-input div').length-1));
-			    $("span:contains('" + selectedText + "')").each(
-			    	function(index, elem){
-			    		$(this).attr("referencedCasual",$('.currentResult .selectize-input div').last().attr("id"));
-		    		});
-			    $('.currentResult .selectize-input div').last().css('background-image',"none");
-			    $('.currentResult .selectize-input div').last().css('background-color', $('.currentPost').attr('postColor'));
-			    $('.currentResult p').html($('.currentResult input')[0].selectize.items.join(" "));
+		    	if($("#results div").length > 0){
+				    $('.currentPost p').highlight(selectedText);//{ wordsOnly: true } , {className: 'error' }
+				    $('.currentResult input')[0].selectize.createItem(selectedText);
+				    var createdItem = $('.currentResult .selectize-input div').last();
+				    createdItem.attr("id", $('.currentResult').attr("id") + "-casual-"+($('.currentResult .selectize-input div').length-1));
+				    createdItem.attr("referencedPost", $('.currentPost').attr("id"));
+				    $("span:contains('" + selectedText + "')").each(
+				    	function(index, elem){
+				    		$(this).attr("referencedCasual",createdItem.attr("id"));
+			    		}); //oneTime, can be reassign after highlightForOnlyOneResult
+				    $('.currentResult textarea').val($('.currentResult input')[0].selectize.items.join(" "));
+					$("#addCausalAlert").hide();
+
+					var tuple = {'data-value':createdItem.attr('data-value'), 'postReference':createdItem.attr('referencedPost'), 'referencedResult':$('.currentResult').attr('id')};
+					var exist = false;
+					wordAndReferencesMap.forEach(function(elem,index){
+						if(elem['data-value'] == createdItem.attr('data-value') && elem['referencedResult'] == $('.currentResult').attr('id')){
+							exist = true;	
+							return;
+						}
+					});
+					if(!exist)
+						wordAndReferencesMap.push(tuple);
+				}
+				else{
+					$("#addCausalAlert").show();
+				}
+				removeSelection();
 			}
 		});
 
 		function clearReferencedWordsFromPosts(){
-			$('.currentResult .selectize-input div').each(
-				function(index, elem){
-					$("span[referencedCasual='"+ elem.id +"'").each(function(index,elem){ //TODO: there are duplicates!! Trace on span with the same value only once!! 
-						$(elem).parent().removeHighlight($(elem).attr("data-value"));
-					});
-				});
+			$('.currentResult .selectize-input .item').each(function(index, elem){
+				var itemText = $(elem).text();
+				itemText = itemText.slice(0, -1);
+				$('#'+$(elem).attr("referencedPost")).removeHighlight(itemText);
+			});
 		}
 
-		$('#nextPost').click(function() {
-	        if($('.currentPost').next().length > 0){
-		        var next = $('.currentPost').next();
-		        $('.currentPost').removeClass("currentPost"); 
-		        next.addClass("currentPost");
-		        $("#posts").scrollTop($("#posts").scrollTop() + 100);
-		    }
-        });
+		function removeSelection(){
+			if (window.getSelection) {
+				if (window.getSelection().empty) {  // Chrome
+					window.getSelection().empty();
+				} else if (window.getSelection().removeAllRanges) {  // Firefox
+					window.getSelection().removeAllRanges();
+				} else if (document.selection) {  // IE?
+					document.selection.empty();
+				}
+			}
+		}
 
-        $('#prevPost').click(function() {
-        	if($('.currentPost').prev().length > 0){
-		        var prev = $('.currentPost').prev();
-		        $('.currentPost').removeClass("currentPost"); 
-		        prev.addClass("currentPost");
-		        $("#posts").scrollTop($("#posts").scrollTop() - 100);
-		    }
-        });
+		function highlightForOnlyOneResult(){
+			$('.currentResult .selectize-input .item').each(function(index, elem){
+				highlightForOneItem(elem);
+			});
+		}
+
+		function highlightForOneItem(elem){
+			var itemText = $(elem).text();
+			itemText = itemText.slice(0, -1);
+			$('#'+$(elem).attr("referencedPost")).highlight(itemText);
+		}
+
+		function expandCurrentCollapsed(){
+			// $(".currentResult .in").collapse("show");
+			// $(".currentResult button").removeClass('collapsed');
+			highlightForOnlyOneResult();
+		}
+
+		function collapseCurrent(){
+			$("#posts").unhighlight({ element: 'span', className: 'highlight' });
+			$(".currentResult .in").collapse("hide");
+			$(".currentResult button").addClass('collapsed');
+			$(".currentResult textarea").attr("readonly","");
+			$(".currentResult textarea").height(20);
+			$(".currentResult").removeClass("currentResult");	
+			selectedWordtoShowHighlights = false;
+		}
+
+		jQuery.fn.removeHighlight = function (pat) {
+	        return this.find("span.highlight").each(function () {
+	            if (!pat || pat.toUpperCase() == $(this).html().toUpperCase()) {
+	                this.parentNode.firstChild.nodeName;
+	                with (this.parentNode) {
+	                    replaceChild(this.firstChild, this);
+	                    normalize();
+	                }
+	            }
+	        }).end();
+        };
 
         $('#addCausal').click(function() {
         	createCausal();
@@ -279,17 +424,6 @@
         	removeCausal();
         });
 
-        jQuery.fn.removeHighlight = function (pat) {
-        return this.find("span.highlight").each(function () {
-            if (!pat || pat.toUpperCase() == $(this).html().toUpperCase()) {
-                this.parentNode.firstChild.nodeName;
-                with (this.parentNode) {
-                    replaceChild(this.firstChild, this);
-                    normalize();
-                }
-            }
-        }).end();
-    };
 
         
 	</script>
