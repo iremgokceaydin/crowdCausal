@@ -312,8 +312,11 @@
 
 		function removeCausal(){
 			clearReferencedWordsFromPosts();
-			$('.currentResult').prev().find('button').click();
+			var idToFocus = $('.currentResult').prev().attr("id");
 			$('.currentResult').remove();
+			if($("#results .result").length > 0)
+				$('#' + idToFocus).find('button').click();
+
 			//TODO: fix the causalIndex
 		}
 
@@ -388,6 +391,7 @@
 		}
 
 		function expandCurrentCollapsed(){
+			// no need to expand manually, button is doing itself already, so just highlight the words as follows
 			highlightForOnlyOneResult();
 		}
 
