@@ -17,6 +17,18 @@
 	<script type="text/javascript" src="https://cdn.rawgit.com/madapaja/jquery.selection/master/src/jquery.selection.js"></script>
 	<script type="text/javascript" src="https://cdn.rawgit.com/selectize/selectize.js/master/dist/js/standalone/selectize.js"></script>
 
+	<!-- <link rel="stylesheet" href="./includes/bootstrap.min.css">
+	<link rel="stylesheet" href="./includes/bootstrap-glyphicons.css">
+	<link rel="stylesheet" href="./includes/jquery-ui.css">
+	<link href="./includes/selectize.default.css" rel="stylesheet"/>
+
+	<script type="text/javascript" src="./includes/jquery-2.2.4.min.js"></script>
+	<script type="text/javascript" src="./includes/jquery-ui.js"></script>
+	<script type="text/javascript" src="./includes/bootstrap.min.js"></script>
+	<script type="text/javascript" src="./includes/jquery.highlight.js"></script>
+	<script type="text/javascript" src="./includes/jquery.selection.js"></script>
+	<script type="text/javascript" src="./includes/selectize.js"></script> -->
+
 	
 
 	<style type="text/css">
@@ -87,7 +99,7 @@
 
 		.result textarea{
 			resize: vertical;
-			background-color: rgb(163, 210, 229);
+			background-color: white;
 		}
 
 		/* Icon when the collapsible content is shown */
@@ -103,17 +115,13 @@
 
 		.alertMsg{
 			color: red;
+			display: none;
 		}
 
-		.editingDone{
-   			display: block;
-   			text-align: center;
+		.collapsing {
+		    transition: height 0.5s;
 		}
 
-		.disabledWords{
-			pointer-events: none;
-    		opacity: 0.5;
-		}
 	</style>
 </head>
 <body>
@@ -158,7 +166,7 @@
 					<h4>Tasks & Controls</h4>
 					<button id="addCausal" type="button" class="btn btn-primary">Add</button>
 					<button id="removeCausal" type="button" class="btn btn-primary">Remove</button>
-					<button id="showAll" type="button" class="btn btn-primary" style="float:right;">Show All</button>
+					<button id="toggleAll" type="button" class="btn btn-primary" style="float:right;">Show All</button>
 				</div>
 				<div class="row">
 					<!-- <form action="https://www.mturk.com/mturk/externalSubmit" id="mturk_form" method="post" name="mturk_form"> --> 
@@ -169,7 +177,7 @@
 			</div>
 		</div>
 
-		<button class="btn btn-lg btn-primary" style="float:right" disabled="disabled" onclick="" type="button">Submit</button>
+		<button class="btn btn-lg btn-primary" style="float:right" id="submitForm" type="button">Submit</button>
 	</section>
 	<!-- close container -->
 
@@ -217,25 +225,29 @@
 		var wordAndReferencesMap = [];
 		var selectedWordtoShowHighlights = false;
 		var lastItemToHighlightPost;
+		var alertEditing = "Please add some text of at least 30 characters";
+		var alertWords = "Please add at least two words of cause-and-effect by highlighting some words from the posts";
 		function createCausal(){
 			collapseCurrent();
 
 			var div = $("<div>", {id: "result-"+causalIndex, class: "panel result"});
-			var button = $("<button>", {'data-toggle':"collapse", id:"collapseSelective", class:"btn btn-info", 'data-parent':"#results", 'data-target':"#collapse-"+causalIndex, style:"width:100%;"});  //
-			var divInner = $("<div>", {id: "collapse-"+causalIndex, class: "collapse in"});
+			var button = $("<button>", {'data-toggle':"collapse", id:"collapseSelective", class:"btn btn-info", 'data-parent':"#results", 'data-target':"#collapse-"+causalIndex, style:"width:100%;"});
+			var p1 = $("<p>", {id: "alertWords", class:"alertMsg"});
+			p1.html('<span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;' + alertWords);
+			var divInner = $("<div>", {id: "collapse-"+causalIndex, class: "panel-collapse collapse in"});
 			$(divInner).collapse({"toggle": false, 'parent': '#results'});
-			var input = $("<input>", {type: "text"});
-			var a = $("<a>", {class: "editingDone", href:''});
-			a.html('<span class="glyphicon glyphicon-ok"></span>Done Adding (& Enable Editing)');
-			var textArea = $("<textarea>", {class:"form-control", rows:"1", id:"comment", readonly:''});
+			var input = $("<input>", {type: "text", placeholder:"Highlight some words from the posts"});
+			var p2 = $("<p>", {id: "alertEditing", class:"alertMsg"});
+			p2.html('<span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;' + alertEditing);
+			var textArea = $("<textarea>", {class:"form-control", rows:"1", id:"textEdit", placeholder:"Enter some text here"});
 			divInner.append(input);
-			divInner.append(a);
 			div.append(button);
+			div.append(p1);
 			div.append(divInner);
+			div.append(p2);
 			div.append(textArea);
 			$("#results").append(div);
 
-			$('.selectize-input input').attr('readonly','');
 			$(div).addClass("currentResult");
 			causalIndex++; //TODO: always increasing although some causal relationship elements are removed!!but it's alright!
 		
@@ -250,13 +262,20 @@
 			        }
 			    },
 			    onItemAdd: function (value, item) {
+			    	if($('.currentResult .selectize-input .item').length > 1) //naive expectation: 1 for cause 1 for effect
+			    		p1.hide();	
 			    	$(item).click(function(e){
 			    		var target = e.target || e.srcElement;
 			    		if(target.tagName != "A"){ //if cross is clicked to remove a word
 				    		if(selectedWordtoShowHighlights && lastItemToHighlightPost == $(item).attr('data-value')){
 				    			$(item).removeClass('active');
 				    			selectedWordtoShowHighlights = false;
-				    			highlightForOnlyOneResult();
+				    			if($('#toggleAll').attr("show") == "true"){
+				    				highlightForAllResults();	
+				    			}
+				    			else{
+				    				highlightForOnlyOneResult(div);
+				    			}
 				    		}
 				    		else{
 				    			clearReferencedWordsFromPosts();
@@ -277,7 +296,7 @@
 	                $('#' + $(item).attr('referencedPost')).removeHighlight(value);
 	                $('.currentResult textarea').val($('.currentResult textarea').val().replace(value,''));
 	                if(lastItemToHighlightPost == $(item).attr('data-value')){
-						highlightForOnlyOneResult();
+						highlightForOnlyOneResult(div);
 						selectedWordtoShowHighlights = false;
 	                }
 	            },
@@ -293,20 +312,28 @@
 					});
 	            }
 			});
-
-			$(a).click(function(e){
-				$('.currentResult textarea').removeAttr('readonly');
-	        	$('.currentResult .selectize-control').addClass("disabledWords");
-	        	$(this).bind('click', function(e){
-				    e.preventDefault();
-				})
-				return false;
-			});
+			$('.currentResult .selectize-input input').attr("readonly",'');
 
 			$(div).find("button").click(function(e){ //this div only expandable using collapse icon
-				collapseCurrent();
-				$(this).parent().addClass("currentResult");
-				expandCurrentCollapsed();
+				if($('#toggleAll').attr("show") == "true"){
+					collapseAll();
+	        		setTimeout(function(){ $(this).click();}, 600);	
+	        		$('#toggleAll').html("Show All");
+	        		$('#toggleAll').attr("show", "false");
+				}
+				else{
+					collapseCurrent();
+					$(this).parent().addClass("currentResult");
+					$('.currentResult textarea').removeAttr('readonly');
+					expandCurrentCollapsed($(this).parent());
+				}
+			});
+
+			$(textArea).on('change keyup paste', function() {
+				if($(this).val().length < 30)
+					p2.show();
+				else
+					p2.hide();	
 			});
 		}
 
@@ -359,11 +386,20 @@
 		});
 
 		function clearReferencedWordsFromPosts(){
-			$('.currentResult .selectize-input .item').each(function(index, elem){
-				var itemText = $(elem).text();
-				itemText = itemText.slice(0, -1);
-				$('#'+$(elem).attr("referencedPost")).removeHighlight(itemText);
-			});
+			if($('#toggleAll').attr("show") == "true"){
+				$('.result .selectize-input .item').each(function(index, elem){
+					var itemText = $(elem).text();
+					itemText = itemText.slice(0, -1);
+					$('#'+$(elem).attr("referencedPost")).removeHighlight(itemText);
+				});
+			}
+			else{
+				$('.currentResult .selectize-input .item').each(function(index, elem){
+					var itemText = $(elem).text();
+					itemText = itemText.slice(0, -1);
+					$('#'+$(elem).attr("referencedPost")).removeHighlight(itemText);
+				});
+			}
 		}
 
 		function removeSelection(){
@@ -378,8 +414,15 @@
 			}
 		}
 
-		function highlightForOnlyOneResult(){
-			$('.currentResult .selectize-input .item').each(function(index, elem){
+		function highlightForAllResults(){
+			$("#results .result").each(
+		    	function(index, elem){
+		    		highlightForOnlyOneResult($(elem));
+    		});	
+		}
+
+		function highlightForOnlyOneResult($result){
+			$result.find('.selectize-input .item').each(function(index, elem){
 				highlightForOneItem(elem);
 			});
 		}
@@ -390,9 +433,9 @@
 			$('#'+$(elem).attr("referencedPost")).highlight(itemText);
 		}
 
-		function expandCurrentCollapsed(){
+		function expandCurrentCollapsed($result){
 			// no need to expand manually, button is doing itself already, so just highlight the words as follows
-			highlightForOnlyOneResult();
+			highlightForOnlyOneResult($result);
 		}
 
 		function collapseCurrent(){
@@ -403,6 +446,41 @@
 			$(".currentResult textarea").height(20);
 			$(".currentResult").removeClass("currentResult");	
 			selectedWordtoShowHighlights = false;
+		}
+
+		function collapseAll(){
+			$("#results button").addClass("collapsed");
+			$('#results .in').collapse("hide");	
+			$("#posts").unhighlight({ element: 'span', className: 'highlight' });
+			selectedWordtoShowHighlights = false;
+		}
+
+		function expandAll(){
+			$('#results .in').collapse("hide");	
+			setTimeout(function(){ 
+				$('#results .panel-collapse').collapse("show");
+				$("#results button.collapsed").removeClass("collapsed");}
+			, 600);
+			
+			highlightForAllResults();			
+		}
+
+		function checkForEmptyText(){
+			$("#results .result").each(
+		    	function(index, elem){
+		    		if($(elem).find("textarea").val() == "" || $(elem).find("textarea").val().length < 30){
+		    			$(elem).find("#alertEditing").show();
+		    		}
+    		}); 	
+		}
+
+		function checkForEmptyWords(){
+			$("#results .result").each(
+		    	function(index, elem){
+		    		if($(elem).find(".selectize-input .item").length < 2){
+		    			$(elem).find("#alertWords").show();
+		    		}
+    		}); 	
 		}
 
 		jQuery.fn.removeHighlight = function (pat) {
@@ -425,7 +503,27 @@
         	removeCausal();
         });
 
+        $('#toggleAll').click(function() {
+        	if ($(this).attr("show") == "true"){
+        		if($("#results .result").length > 1){
+	        		$(this).html("Show All");
+	        		$(this).attr("show", "false");	
+	        		collapseAll();
+        		}	
+        	}
+        	else{
+        		if($("#results .result").length > 1){
+	        		$(this).html("Hide All");
+	        		$(this).attr("show", "true");
+	        		expandAll();
+        		}
+        	}
+        });
 
+        $('#submitForm').click(function(){
+        	checkForEmptyText();
+        	checkForEmptyWords();
+        });
         
 	</script>
 	
