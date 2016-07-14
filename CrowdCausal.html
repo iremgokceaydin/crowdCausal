@@ -176,13 +176,24 @@
 				</div>
 			</div>
 		</div>
-
-		<button class="btn btn-lg btn-primary" style="float:right" id="submitForm" type="button">Submit</button>
+		
 	</section>
 	<!-- close container -->
 
-	<input type="hidden" name="hit_data" id="hit_data" value="">
-	<!-- <input type="hidden" name="hit_data" value='$(hitData)'> -->
+	<section>
+		<div class="row col-xs-12 col-md-12" style="margin-bottom: 10px;">
+			<fieldset id="inputsToSubmit" style="border:none;">
+				<!-- <input name="chunk-1-pieces" type="hidden"/> -->
+				<!-- <input name="chunk-1-text" type="hidden"/> -->
+			</fieldset>
+			<button class="btn btn-lg btn-primary" style="float:right" id="submitForm" type="button">Submit</button>
+		</div>
+	</section>
+
+	<section>
+		<input type="hidden" name="hit_data" id="hit_data" value="">
+		<!-- <input type="hidden" name="hit_data" value='$(hitData)'> -->
+	</section>
 	
 	<script type="text/javascript">
 		//var currentColor = getRandomColor();
@@ -294,14 +305,14 @@
 						}
 					});
 	                $('#' + $(item).attr('referencedPost')).removeHighlight(value);
-	                $('.currentResult textarea').val($('.currentResult textarea').val().replace(value,''));
+	                //$('.currentResult textarea').val($('.currentResult textarea').val().replace(value,''));
 	                if(lastItemToHighlightPost == $(item).attr('data-value')){
 						highlightForOnlyOneResult(div);
 						selectedWordtoShowHighlights = false;
 	                }
 	            },
 	            onChange: function (value){ //calling onItemRemove as well
-	            	$('.currentResult textarea').val($('.currentResult input')[0].selectize.items.join(" "));	
+	            	//$('.currentResult textarea').val($('.currentResult input')[0].selectize.items.join(" "));	
 	            	wordAndReferencesMap.forEach(function(elem,index){
 	            		$('.currentResult .items .item').each(function (index,item){
 	            			if(elem['data-value'] == $(item).attr('data-value') && elem['referencedResult'] == $('.currentResult').attr('id')){
@@ -364,7 +375,7 @@
 				    	function(index, elem){
 				    		$(this).attr("referencedCasual",createdItem.attr("id"));
 			    		}); //oneTime, can be reassign after highlightForOnlyOneResult
-				    $('.currentResult textarea').val($('.currentResult input')[0].selectize.items.join(" "));
+				    //$('.currentResult textarea').val($('.currentResult input')[0].selectize.items.join(" "));
 					$("#addCausalAlert").hide();
 
 					var tuple = {'data-value':createdItem.attr('data-value'), 'postReference':createdItem.attr('referencedPost'), 'referencedResult':$('.currentResult').attr('id')};
@@ -465,22 +476,30 @@
 			highlightForAllResults();			
 		}
 
-		function checkForEmptyText(){
+		function isThereEmptyText(){
+			var emptyText = false;
 			$("#results .result").each(
 		    	function(index, elem){
 		    		if($(elem).find("textarea").val() == "" || $(elem).find("textarea").val().length < 30){
 		    			$(elem).find("#alertEditing").show();
+		    			emptyText = true;
 		    		}
     		}); 	
+
+    		return emptyText;
 		}
 
-		function checkForEmptyWords(){
+		function isThereEmptyWords(){
+			var emptyWords = false;
 			$("#results .result").each(
 		    	function(index, elem){
 		    		if($(elem).find(".selectize-input .item").length < 2){
 		    			$(elem).find("#alertWords").show();
+		    			emptyWords = true;
 		    		}
     		}); 	
+
+    		return emptyWords;
 		}
 
 		jQuery.fn.removeHighlight = function (pat) {
@@ -521,8 +540,30 @@
         });
 
         $('#submitForm').click(function(){
-        	checkForEmptyText();
-        	checkForEmptyWords();
+        	var a = isThereEmptyWords();
+        	var b = isThereEmptyText();
+        	if($("#results .result").length > 0 && !( a || b)){
+        		$('#inputsToSubmit').empty();
+        		$('.result').each(function(index, elem){
+        			
+        			var pieces = [];
+        			$(elem).find('.items .item').each(function(index, elem){
+        				var piece = {};	
+        				piece.index = index;
+        				piece.value = $(elem).attr("data-value");
+						piece.referencedPost = $(elem).attr("referencedPost");
+						pieces.push(piece);
+					});
+					// alert(JSON.stringify(pieces));
+					var input_pieces = $("<input>", {type: "hidden", name:"chunk-" + index + "-pieces", value: JSON.stringify(pieces)});
+					var input_text = $("<input>", {type: "hidden", name:"chunk-" + index + "-text", value:$(elem).find("textarea").val()});
+					$('#inputsToSubmit').append(input_pieces);
+					$('#inputsToSubmit').append(input_text);
+				});
+        		// alert("Ready to submit");
+        	}
+        	// else
+        	// 	alert("Not ready yet!");
         });
         
 	</script>
