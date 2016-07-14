@@ -186,7 +186,8 @@
 				<!-- <input name="chunk-1-pieces" type="hidden"/> -->
 				<!-- <input name="chunk-1-text" type="hidden"/> -->
 			</fieldset>
-			<button class="btn btn-lg btn-primary" style="float:right" id="submitForm" type="button">Submit</button>
+			<!-- button will be commented out -->
+			<button class="btn btn-lg btn-primary" style="float:right" id="submitButton" type="button">Submit</button>
 		</div>
 	</section>
 
@@ -539,7 +540,7 @@
         	}
         });
 
-        $('#submitForm').click(function(){
+        function prepareInputsForSubmit(){
         	var a = isThereEmptyWords();
         	var b = isThereEmptyText();
         	if($("#results .result").length > 0 && !( a || b)){
@@ -564,7 +565,14 @@
         	}
         	// else
         	// 	alert("Not ready yet!");
-        });
+        }
+
+        $(document).ready(function() {
+		  $('#submitButton').click(function() {
+		    prepareInputsForSubmit();
+		    return true;
+		  });
+		});
         
 	</script>
 	
